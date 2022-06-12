@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<!-- <head>
+  <link rel="stylesheet" href="css/styles.css">
+</head> -->
+
+<body>
+<h1>Second page, check it!</h1>
+<p id="demo"></p>
+<script>
+document.getElementById("demo").innerHTML = "Hello world, using Javascript!";
+</script>
+
+<!-- <input type="text" id="text_input_0", onkeypress="updateText(event)" autocomplete="off", style="border:none; outline:none; font-family:courier;", autofocus></input> -->
+
+
+<p style="font-family:courier;font-size:14px;">>> <input type="text", id="text_input_0", onkeypress="updateText(event)", autocomplete="off", style="border: none;outline:none;font-family:courier;font-size:14px;", autofocus></input></p>
+
+
+<!-- <div class="input-box">
+  <span class="prefix">>></span>
+  <input type="text" id="text_input_0", onkeypress="updateText(event)" autocomplete="off", style="border:none; outline:none; font-family:courier;", autofocus></input>
+</div>
+ -->
+
+<script type="text/javascript">
+	function updateText(event){
+
+		if (event.keyCode == 13) { // only trigger when Enter (key 13) is pressed
+			document.getElementById("demo").innerHTML = document.getElementById("text_input_0").value;
+			if (document.getElementById("text_input_0").value == "go home") {
+				document.location.href = "index.html";
+			}
+			else if (document.getElementById("text_input_0").value == "smile") {
+				document.getElementById("picture").style.display = "block";
+			}
+			document.getElementById("text_input_0").value = "";
+
+		}
+	}
+</script>
+
+<br><br><img id="picture" src="pictures/me_and_ali.jpg" width="306" height="408" style="display:none;">
+
+</body>
+</html>
