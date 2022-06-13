@@ -14,7 +14,7 @@ document.getElementById("demo").innerHTML = "Hello world, using Javascript!";
 <!-- <input type="text" id="text_input_0", onkeypress="updateText(event)" autocomplete="off", style="border:none; outline:none; font-family:courier;", autofocus></input> -->
 
 
-<p style="font-family:courier;font-size:14px;">>> <input type="text", id="text_input_0", onkeypress="updateText(event)", autocomplete="off", style="border: none;outline:none;font-family:courier;font-size:14px;", autofocus></input></p>
+<p style="font-family:courier;font-size:14px;">>> <input type="text", id="text_input_0", onkeypress="updateText(event)", autocomplete="off", style="border: none;outline:none;font-family:courier;font-size:14px;caret-shape:block", autofocus></input></p>
 
 
 <!-- <div class="input-box">
@@ -37,7 +37,17 @@ document.getElementById("demo").innerHTML = "Hello world, using Javascript!";
 			document.getElementById("text_input_0").value = "";
 
 		}
-	}
+	};
+
+	document.onkeypress = function (event) {
+		if (document.activeElement == document.getElementById("text_input_0")) {
+			// pass
+		}
+		else {
+			document.getElementById("text_input_0").focus();
+		}
+	};
+
 </script>
 
 <br><br><img id="picture" src="pictures/me_and_ali.jpg" width="306" height="408" style="display:none;">

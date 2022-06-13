@@ -1,0 +1,112 @@
+<!-- Code from: http://www.dynamicdrive.com/forums/showthread.php?17450-Emulating-a-terminal-like-caret-with-javascript-and-css -->
+<html lang="en" class="notranslate" translate="no">
+	<head>
+		<meta name="google" content="notranslate" />
+		<script type="text/javascript">
+			function $(elid){
+				return document.getElementById(elid);
+			}
+			
+			var user_text = "";
+			var caret_visible = true;
+
+			var to_render = "";
+			var chars_rendered = 0;
+			var rendering;
+
+			document.onkeydown = function (event) {
+				// Only allow letters, numbers, and select punctuation
+				if (event.key.length == 1 && /[a-zA-Z0-9-_.!? ]/.test(event.key)) {
+					user_text = user_text.concat(event.key);
+				}
+				// Backspace removes characters
+				else if (event.key == "Backspace" && user_text.length > 0) {
+					user_text = user_text.substr(0, user_text.length-1);
+				}
+
+				else if (event.key == "Enter" && user_text.length > 0) {
+					parse_input(user_text);
+					user_text = "";
+				}
+
+				if (caret_visible) {
+					$("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")	
+				}
+				else {
+					$("input_line").innerHTML = ">> ".concat(user_text)
+				}
+				
+			};
+
+			setInterval(blink, 530);
+			function blink() {
+				if (caret_visible) {
+					caret_visible = false;
+					$("input_line").innerHTML = ">> ".concat(user_text)
+				}
+				else {
+					caret_visible = true;
+					$("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")
+				}
+			}
+
+			function parse_input(input) {
+				if (input == "go home") {
+					document.location.href = "index.html";
+				}
+				else if (input == "hello world") {
+					render("And hello to you, too!");
+				}
+			}
+
+			function render(text) {
+				to_render = text;
+				chars_rendered = 0;
+				rendering = setInterval(update_render, 45);
+			}
+
+			function update_render() {
+				if (chars_rendered == to_render.length) {
+					clearInterval(rendering)
+				}
+				else {
+					chars_rendered += 1;
+					$("output_line").innerHTML = to_render.substr(0, chars_rendered);
+				}
+			}
+			
+		</script>
+		
+		<style type="text/css">
+			body {
+				margin: 0px;
+				padding: 0px;
+				height: 99%;
+				background-color: rgb(40, 40, 40);
+			}
+			
+			
+			#input_line {
+				font-family: courier;
+				font-weight: bold;
+				color: rgb(0, 255, 51);
+			}
+
+			#output_line {
+				font-family: courier;
+				font-weight: bold;
+				color: rgb(0, 255, 51);
+			}
+
+                        #terminal {
+                                margin: 5px;
+                        }
+		</style>
+	</head>
+	<body>
+	<div id="terminal">
+		<span id="output_line"> Hello! Feel free to type some commands.</span><br>
+		<span id="input_line">>> </span>
+	</div>
+	</body>
+</html>
