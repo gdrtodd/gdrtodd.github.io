@@ -1,112 +1,158 @@
 <!-- Code from: http://www.dynamicdrive.com/forums/showthread.php?17450-Emulating-a-terminal-like-caret-with-javascript-and-css -->
 <html lang="en" class="notranslate" translate="no">
-	<head>
-		<meta name="google" content="notranslate" />
-		<script type="text/javascript">
-			function $(elid){
-				return document.getElementById(elid);
-			}
-			
-			var user_text = "";
-			var caret_visible = true;
+        <head>
+                <meta name="google" content="notranslate" />
+                <script type="text/javascript">
+                        function $(elid){
+                                return document.getElementById(elid);
+                        }
+                        
+                        var user_text = "";
+                        var caret_visible = true;
 
-			var to_render = "";
-			var chars_rendered = 0;
-			var rendering;
+                        var to_render = "";
+                        var chars_rendered = 0;
+                        var rendering;
 
-			document.onkeydown = function (event) {
-				// Only allow letters, numbers, and select punctuation
-				if (event.key.length == 1 && /[a-zA-Z0-9-_.!? ]/.test(event.key)) {
-					user_text = user_text.concat(event.key);
-				}
-				// Backspace removes characters
-				else if (event.key == "Backspace" && user_text.length > 0) {
-					user_text = user_text.substr(0, user_text.length-1);
-				}
+                        // function getTextWidth(text, font) {
+                        //         const canvas = document.createElement('canvas');
+                        //         const context = canvas.getContext('2d');
 
-				else if (event.key == "Enter" && user_text.length > 0) {
-					parse_input(user_text);
-					user_text = "";
-				}
+                        //         context.font = font || getComputedStyle(document.body).font;
 
-				if (caret_visible) {
-					$("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")	
-				}
-				else {
-					$("input_line").innerHTML = ">> ".concat(user_text)
-				}
-				
-			};
+                        //         return context.measureText(text).width;
+                        // }
 
-			setInterval(blink, 530);
-			function blink() {
-				if (caret_visible) {
-					caret_visible = false;
-					$("input_line").innerHTML = ">> ".concat(user_text)
-				}
-				else {
-					caret_visible = true;
-					$("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")
-				}
-			}
+                        function getTextWidth(text, font) {
+                                // re-use canvas object for better performance
+                                const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+                                const context = canvas.getContext("2d");
+                                context.font = font;
+                                const metrics = context.measureText(text);
+                                return metrics.width;
+                        }
 
-			function parse_input(input) {
-				if (input == "go home") {
-					document.location.href = "index.html";
-				}
-				else if (input == "hello world") {
-					render("And hello to you, too!");
-				}
-			}
+                        document.onkeydown = function (event) {
 
-			function render(text) {
-				to_render = text;
-				chars_rendered = 0;
-				rendering = setInterval(update_render, 45);
-			}
+                                // Only allow letters, numbers, and select punctuation
+                                if (event.key.length == 1 && /[a-zA-Z0-9-_.!? ]/.test(event.key)) {
+                                        user_text = user_text.concat(event.key);
+                                }
+                                // Backspace removes characters
+                                else if (event.key == "Backspace" && user_text.length > 0) {
+                                        user_text = user_text.substr(0, user_text.length-1);
+                                }
 
-			function update_render() {
-				if (chars_rendered == to_render.length) {
-					clearInterval(rendering)
-				}
-				else {
-					chars_rendered += 1;
-					$("output_line").innerHTML = to_render.substr(0, chars_rendered);
-				}
-			}
-			
-		</script>
-		
-		<style type="text/css">
-			body {
-				margin: 0px;
-				padding: 0px;
-				height: 99%;
-				background-color: rgb(40, 40, 40);
-			}
-			
-			
-			#input_line {
-				font-family: courier;
-				font-weight: bold;
-				color: rgb(0, 255, 51);
-			}
+                                // Enter clears the text and parses it [or skips to the end of the animation, maybe?]
+                                else if (event.key == "Enter" && user_text.length > 0) {
+                                        parse_input(user_text);
+                                        user_text = "";
+                                }
 
-			#output_line {
-				font-family: courier;
-				font-weight: bold;
-				color: rgb(0, 255, 51);
-			}
+                                // Update the displayed text
+                                if (caret_visible) {
+                                        $("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")   
+                                }
+                                else {
+                                        $("input_line").innerHTML = ">> ".concat(user_text)
+                                }
+
+                                
+                        };
+
+                        setInterval(blink, 530);
+                        function blink() {
+                                if (caret_visible) {
+                                        caret_visible = false;
+                                        $("input_line").innerHTML = ">> ".concat(user_text)
+                                }
+                                else {
+                                        caret_visible = true;
+                                        $("input_line").innerHTML = ">> ".concat(user_text).concat("&#9646;")
+                                }
+                        }
+
+                        function parse_input(input) {
+                                if (input == "go home") {
+                                        document.location.href = "index.html";
+                                }
+                                else if (input == "hello world") {
+                                        render("And hello to you, too!");
+                                }
+                                else {
+                                        render("I'm afraid I don't have a response prepared for that yet.")
+                                }
+                        }
+
+                        function render(text) {
+                                to_render = text;
+                                chars_rendered = 0;
+                                rendering = setInterval(update_render, 40);
+                        }
+
+                        function update_render() {
+                                if (chars_rendered == to_render.length) {
+                                        clearInterval(rendering)
+                                }
+                                else {
+                                        chars_rendered += 1;
+                                        $("output_line").innerHTML = to_render.substr(0, chars_rendered);
+                                }
+                        }
+                        
+                </script>
+                
+                <style type="text/css">
+                        body {
+                                margin: 0px;
+                                padding: 0px;
+                                height: 99%;
+                                background-color: rgb(0, 0, 0);
+                                
+                        }
+                        
+                        
+                        #input_line {
+                                font-family: courier;
+                                font-weight: bold;
+                                font-size: 14px;
+                                color: rgb(0, 255, 51);
+                                width: 400px;
+                                
+                                white-space: nowrap;
+                                overflow: hidden;
+                                display: block;
+                                text-overflow: ellipsis;
+                        }
+
+                        #output_line {
+                                font-family: courier;
+                                font-weight: bold;
+                                font-size: 14px;
+                                color: rgb(0, 255, 51);
+                        }
+
+                        #side-panel {
+                                width: 400px;
+                                height: 100vh;
+                                background-color: rgb(40, 40, 40);
+                        }
 
                         #terminal {
-                                margin: 5px;
+                                padding: 5px;
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                                right: 400px;
                         }
-		</style>
-	</head>
-	<body>
-	<div id="terminal">
-		<span id="output_line"> Hello! Feel free to type some commands.</span><br>
-		<span id="input_line">>> </span>
-	</div>
-	</body>
+                </style>
+        </head>
+        <body>
+        <div id="side-panel">
+                <div id="terminal">
+                        <span id="output_line"> Hello! Feel free to type some commands.</span><br>
+                        <span id="input_line">>> </span>
+                </div>
+        </div>
+        </body>
 </html>
