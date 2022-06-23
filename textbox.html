@@ -2,6 +2,7 @@
 <html lang="en" class="notranslate" translate="no">
         <head>
                 <meta name="google" content="notranslate" />
+                <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
                 <script type="text/javascript">
                         function $(elid){
                                 return document.getElementById(elid);
@@ -9,33 +10,16 @@
                         
                         var user_text = "";
                         var caret_visible = true;
+                        var max_chars = 37;
 
                         var to_render = "";
                         var chars_rendered = 0;
                         var rendering;
 
-                        // function getTextWidth(text, font) {
-                        //         const canvas = document.createElement('canvas');
-                        //         const context = canvas.getContext('2d');
-
-                        //         context.font = font || getComputedStyle(document.body).font;
-
-                        //         return context.measureText(text).width;
-                        // }
-
-                        function getTextWidth(text, font) {
-                                // re-use canvas object for better performance
-                                const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-                                const context = canvas.getContext("2d");
-                                context.font = font;
-                                const metrics = context.measureText(text);
-                                return metrics.width;
-                        }
-
                         document.onkeydown = function (event) {
 
                                 // Only allow letters, numbers, and select punctuation
-                                if (event.key.length == 1 && /[a-zA-Z0-9-_.!? ]/.test(event.key)) {
+                                if (event.key.length == 1 && /[a-zA-Z0-9-_.!? ]/.test(event.key) && user_text.length < max_chars) {
                                         user_text = user_text.concat(event.key);
                                 }
                                 // Backspace removes characters
@@ -80,12 +64,15 @@
                                         render("And hello to you, too!");
                                 }
                                 else {
-                                        render("I'm afraid I don't have a response prepared for that yet.")
+                                        render("I'm afraid I don't have a good response adequately prepared for that yet.")
                                 }
                         }
 
                         function render(text) {
+                                $("output_line").innerHTML = "";
                                 to_render = text;
+                                cur_line_len = 0;
+
                                 chars_rendered = 0;
                                 rendering = setInterval(update_render, 40);
                         }
@@ -95,8 +82,15 @@
                                         clearInterval(rendering)
                                 }
                                 else {
+
+                                        if (cur_line_len == max_chars + 3) {
+                                                $("output_line").innerHTML = $("output_line").innerHTML.concat("<br>");
+                                                cur_line_len = 0;   
+                                        }
+
+                                        $("output_line").innerHTML = $("output_line").innerHTML.concat(to_render.charAt(chars_rendered));
                                         chars_rendered += 1;
-                                        $("output_line").innerHTML = to_render.substr(0, chars_rendered);
+                                        cur_line_len += 1;
                                 }
                         }
                         
@@ -107,18 +101,19 @@
                                 margin: 0px;
                                 padding: 0px;
                                 height: 99%;
-                                background-color: rgb(0, 0, 0);
+                                background-color: rgb(218, 230, 240);
                                 
-                        }
-                        
+                        }          
                         
                         #input_line {
                                 font-family: courier;
                                 font-weight: bold;
                                 font-size: 14px;
-                                color: rgb(0, 255, 51);
+                                /*color: rgb(0, 255, 51);*/
+                                color: rgb(0, 0, 0);
                                 width: 400px;
-                                
+                                position: absolute;
+
                                 white-space: nowrap;
                                 overflow: hidden;
                                 display: block;
@@ -129,26 +124,69 @@
                                 font-family: courier;
                                 font-weight: bold;
                                 font-size: 14px;
-                                color: rgb(0, 255, 51);
+                                
+                                position: absolute;
+                                top: -40px;
+                                color: rgb(0, 0, 0);
+                                width: 350px;
+                                /*overflow-wrap: break-word;*/
+
                         }
 
                         #side-panel {
                                 width: 400px;
                                 height: 100vh;
-                                background-color: rgb(40, 40, 40);
+                                /*background-color: rgb(40, 40, 40);*/
+                                background-color: rgb(240, 240, 240);
+
                         }
 
                         #terminal {
-                                padding: 5px;
+                                padding: 20px;
                                 position: absolute;
                                 bottom: 0;
                                 left: 0;
                                 right: 400px;
+                                /*width: 350px;*/
+                        }
+
+                        #links {
+                                text-align: left;
+                                font-family: courier;
+                                font-weight: bold;
+                                font-size: 20px;
+                                padding-top: 400px;
+                                padding-left: 110px;
+                                line-height: 40px;
+                        }
+
+                        a {
+                                color: inherit;
+                                text-decoration: none;
+                        }
+
+                        a:hover {
+                                text-decoration: underline;
+                        }
+
+                        img {
+                                border-radius: 50%;
+                                position: absolute;
+                                left: 50;
+                                top: 50;
+                                /*border: 4px solid rgb(0,0,0);*/
                         }
                 </style>
         </head>
         <body>
         <div id="side-panel">
+                <img src="pictures/square_profile.jpg" width=300 height=300>
+                <div id="links">
+                        <a href="mailto:gdrtodd@nyu.edu"><i style="position: relative; top: 5px; margin-right: 5px" class="material-icons">email</i>Email</a><br>
+                        <a href="https://github.com/gdrtodd" target="_blank"><i style="position: relative; top: 5px; margin-right: 5px" class="material-icons">computer</i>Github</a><br>
+                        <a href="https://scholar.google.com/citations?hl=en&user=NyBWyCIAAAAJ" target="_blank"><i style="position: relative; top: 5px; margin-right: 5px" class="material-icons">school</i>Google Scholar</a><br>
+                        <a href="https://orbitalics.itch.io/" target="_blank"><i style="position: relative; top: 5px; margin-right: 5px" class="material-icons">videogame_asset</i>itch.io</a><br>
+                </div>
                 <div id="terminal">
                         <span id="output_line"> Hello! Feel free to type some commands.</span><br>
                         <span id="input_line">>> </span>
